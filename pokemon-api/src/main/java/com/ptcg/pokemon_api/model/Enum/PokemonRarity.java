@@ -10,7 +10,7 @@ public enum PokemonRarity {
     IMMERSIVE,
     GOLDEN;
 
-    public static PokemonRarity fromString(String rarity) {
+   public static  PokemonRarity getRarity(String rarity) {
         try {
             return PokemonRarity.valueOf(rarity.toUpperCase());
         } catch (IllegalArgumentException e) {

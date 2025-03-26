@@ -12,11 +12,11 @@ public enum PokemonType {
     GHOST,
     DRAGON;
 
-    public static PokemonType fromString(String type) {
+    public static PokemonType getPokemonType(String type) {
         try {
             return PokemonType.valueOf(type.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Unknown type: " + type);
+            throw new IllegalArgumentException("Unknown Pokémon type: " + type);
         }
     }
 }

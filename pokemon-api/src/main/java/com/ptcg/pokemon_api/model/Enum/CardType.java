@@ -6,7 +6,7 @@ public enum CardType {
     SUPPORTER,
     ITEM;
 
-    public static CardType fromString(String type) {
+    public static CardType getCardType(String type) {
         try {
             return CardType.valueOf(type.toUpperCase());
         } catch (IllegalArgumentException e) {
