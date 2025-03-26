@@ -18,7 +18,7 @@ public class PokemonTest {
                 .id("1")
                 .name(new Name("Pikachu"))
                 .type(PokemonType.ELECTRIC)
-                .description(new Description("A friendly electric-type Pokémon.")) 
+                .description(new Description(6666); 
                 .cardType(CardType.POKEMON)
                 .rarity(PokemonRarity.COMMON)
                 .evolutionStage(EvolutionStage.BASIC)
