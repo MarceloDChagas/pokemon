@@ -5,9 +5,9 @@ import java.util.List;
 
 public class PokemonStatus {
     private int hp;
-    private List<String> attack;
+    private List<Attack> attack;
 
-    public PokemonStatus(int hp, List<String> attack) {
+    public PokemonStatus(int hp, List<Attack> attack) {
         if (!isValidHp(hp)) {
             throw new IllegalArgumentException("Invalid HP value: " + hp);
         }
@@ -22,12 +22,12 @@ public class PokemonStatus {
         return hp >= 0;
     }
 
-    public boolean isValidAttack(List<String> attack) {
+    public boolean isValidAttack(List<Attack> attack) {
         if (attack == null || attack.size() == 0) {
             return false; 
         }
-        for (String atk : attack) {
-            if (atk == null || atk.trim().isEmpty()) { 
+        for (Attack atk : attack) {
+            if (atk == null || atk.getName() == null || atk.getName().isEmpty() || atk.getDamage() < 0) { 
                 return false; 
             }
         }
@@ -38,7 +38,7 @@ public class PokemonStatus {
         return hp;
     }
 
-    public List<String> getAttack() {
+    public List<Attack> getAttack() {
         return attack;
     }
 }

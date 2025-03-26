@@ -22,7 +22,7 @@ public class PokemonTest {
                 .cardType(CardType.POKEMON)
                 .rarity(PokemonRarity.COMMON)
                 .evolutionStage(EvolutionStage.BASIC)
-                .pokemonStatus(new PokemonStatus(50, Arrays.asList("10")))
+                .pokemonStatus(new PokemonStatus(50, Arrays.asList(new Attack("Thundershock", 30))))
                 .build();
     
         assertNotNull(pikachu);
@@ -34,8 +34,9 @@ public class PokemonTest {
         assertEquals(PokemonRarity.COMMON, pikachu.getRarity());
         assertEquals(EvolutionStage.BASIC, pikachu.getEvolutionStage());
         assertEquals(50, pikachu.getPokemonStatus().getHp());
-        assertEquals(Arrays.asList("10"), pikachu.getPokemonStatus().getAttack());
-
+        assertEquals(1, pikachu.getPokemonStatus().getAttack().size());
+        assertEquals("Thundershock", pikachu.getPokemonStatus().getAttack().get(0).getName());
+        assertEquals(30, pikachu.getPokemonStatus().getAttack().get(0).getDamage());
     }
 
     @Test
