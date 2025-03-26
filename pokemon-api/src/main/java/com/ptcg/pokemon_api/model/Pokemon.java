@@ -2,6 +2,7 @@ package com.ptcg.pokemon_api.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.ptcg.pokemon_api.model.Enum.*;
 import com.ptcg.pokemon_api.model.valueObject.*;
@@ -9,15 +10,32 @@ import com.ptcg.pokemon_api.model.valueObject.*;
 @Document(collection = "pokemons")
 public class Pokemon {
     
-    @Id
+  @Id
     private String id;
+
+    @Field("name")
     private Name name;
+
+    @Field("type")
     private PokemonType type;
+
+    @Field("description")
     private Description description;
+
+    @Field("cardType")
     private CardType cardType;
+
+    @Field("rarity")
     private PokemonRarity rarity;
+
+    @Field("evolutionStage")
     private EvolutionStage evolutionStage;
+
+    @Field("pokemonStatus")
     private PokemonStatus pokemonStatus;
+    
+    public Pokemon() {
+    }
 
     private Pokemon(Builder builder) {
         this.id = builder.id;
