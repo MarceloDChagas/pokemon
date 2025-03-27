@@ -1,8 +1,7 @@
-package com.ptcg.pokemon_api.Model;
+package com.ptcg.pokemon_api.model;
 
 import org.junit.jupiter.api.Test;
 
-import com.ptcg.pokemon_api.model.Pokemon;
 import com.ptcg.pokemon_api.model.Enum.*;
 import com.ptcg.pokemon_api.model.valueObject.*;
 
