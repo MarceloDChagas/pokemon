@@ -26,7 +26,7 @@ public class PokemonTest {
     
         assertNotNull(pikachu);
         assertEquals("1", pikachu.getId());
-        assertEquals("Pikachu", pikachu.getName().toString());
+        assertEquals("aaaa", pikachu.getName().toString());
         assertEquals(PokemonType.ELECTRIC, pikachu.getType());
         assertEquals("A friendly electric-type Pokémon.", pikachu.getDescription().toString());
         assertEquals(CardType.POKEMON, pikachu.getCardType());
