@@ -1,21 +1,19 @@
 package com.ptcg.pokemon_api.model.valueObject;
 
+import com.ptcg.pokemon_api.exception.InvalidDescriptionException;
+
 public class Description {
     private String description;
 
     public Description(String description) {
-        if(isValidDescription(description)) {
-           this.description = "GENERIC DESCRIPTION";
+        if (!isValidDescription(description)) {
+            throw new InvalidDescriptionException(description);
         }
-        this.description = description;
+        this.description = description.trim(); 
     }
 
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public boolean isValidDescription(String description) {

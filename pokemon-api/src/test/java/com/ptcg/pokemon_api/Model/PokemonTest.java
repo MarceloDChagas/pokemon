@@ -26,16 +26,16 @@ public class PokemonTest {
     
         assertNotNull(pikachu);
         assertEquals("1", pikachu.getId());
-        assertEquals("aaaa", pikachu.getName().toString());
+        assertEquals("Pikachu", pikachu.getName().toString());
         assertEquals(PokemonType.ELECTRIC, pikachu.getType());
         assertEquals("A friendly electric-type Pokémon.", pikachu.getDescription().toString());
         assertEquals(CardType.POKEMON, pikachu.getCardType());
         assertEquals(PokemonRarity.COMMON, pikachu.getRarity());
         assertEquals(EvolutionStage.BASIC, pikachu.getEvolutionStage());
         assertEquals(50, pikachu.getPokemonStatus().getHp());
-        assertEquals(1, pikachu.getPokemonStatus().getAttack().size());
-        assertEquals("Thundershock", pikachu.getPokemonStatus().getAttack().get(0).getName());
-        assertEquals(30, pikachu.getPokemonStatus().getAttack().get(0).getDamage());
+        assertEquals(1, pikachu.getPokemonStatus().getAttacks().size());
+        assertEquals("Thundershock", pikachu.getPokemonStatus().getAttacks().get(0).getName());
+        assertEquals(30, pikachu.getPokemonStatus().getAttacks().get(0).getDamage());
     }
 
     @Test
