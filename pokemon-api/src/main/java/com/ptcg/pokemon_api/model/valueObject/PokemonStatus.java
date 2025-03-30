@@ -1,18 +1,30 @@
 package com.ptcg.pokemon_api.model.valueObject;
 
 import java.util.List;
+
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ptcg.pokemon_api.exception.InvalidAttackException;
 import com.ptcg.pokemon_api.exception.InvalidHpException;
 
 public class PokemonStatus {
     private int hp;
-    private List<Attack> attacks;
+    
+    @Field("attack")    
+    private List<Attack> attack;
 
-    public PokemonStatus(int hp, List<Attack> attacks) {
+    public PokemonStatus() {}
+    
+    @JsonCreator
+    public PokemonStatus(
+        @JsonProperty("hp") int hp, 
+        @JsonProperty("attack") List<Attack> attack) {
         validateHp(hp);
-        validateAttackList(attacks);
+        validateAttackList(attack);
         this.hp = hp;
-        this.attacks = attacks;
+        this.attack = attack;
     }
 
     private void validateHp(int hp) {
@@ -21,9 +33,9 @@ public class PokemonStatus {
         }
     }
 
-    private void validateAttackList(List<Attack> attacks) {
-        if (attacks == null || attacks.isEmpty()) {
-            throw new InvalidAttackException(attacks);
+    private void validateAttackList(List<Attack> attack) {
+        if (attack == null || attack.isEmpty()) {
+            throw new InvalidAttackException(attack);
         }
     }
 
@@ -32,8 +44,6 @@ public class PokemonStatus {
     }
 
     public List<Attack> getAttacks() {
-        return attacks;
+        return attack;
     }
-
-    
 }

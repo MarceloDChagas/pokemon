@@ -1,59 +1,57 @@
 package com.ptcg.pokemon_api.controller;
 
-import java.util.List;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
+import com.ptcg.pokemon_api.exception.PokemonNotFoundException;
 import com.ptcg.pokemon_api.model.Pokemon;
 import com.ptcg.pokemon_api.service.PokemonService;
+import java.util.List;
 
+@Validated // Habilita validações de parâmetros na URL
 @RestController
 public class PokemonController {
 
     @Autowired
     private PokemonService pokemonService;
 
-    @GetMapping("/pokemon")
-    public String getPokemon() {
-        return "Hello, Pokemon!";
-    }
-
-    @GetMapping("/pokemon/{id}")
-    public Pokemon getPokemonById(@PathVariable String id) {
+    @GetMapping("/{id}")
+    public Pokemon getPokemonById(
+            @PathVariable String id) {
         Pokemon pokemon = pokemonService.getPokemonById(id);
         if (pokemon == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pokemon not found");
+            throw new PokemonNotFoundException("Pokémon com ID " + id + " não encontrado");
         }
         return pokemon;
     }
 
-    @GetMapping("/pokemon/type/{type}")
-    public List<Pokemon> getPokemonByType(@PathVariable String type) {
+    @GetMapping("/type/{type}")
+    public List<Pokemon> getPokemonByType(
+            @PathVariable @NotBlank(message = "Tipo não pode estar vazio") String type) {
         List<Pokemon> pokemons = pokemonService.getPokemonByType(type);
         if (pokemons.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No Pokemon found");
+            throw new PokemonNotFoundException("Nenhum Pokémon encontrado do tipo: " + type);
         }
         return pokemons;
     }
 
-    @GetMapping("/pokemon/all")
+    @GetMapping("/pokemons")
     public List<Pokemon> getAllPokemons() {
         List<Pokemon> pokemons = pokemonService.getAllPokemons();
         if (pokemons.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No Pokemon found");
+            throw new PokemonNotFoundException("Nenhum Pokémon cadastrado");
         }
         return pokemons;
     }
 
-    @PostMapping("/pokemon/create")
-    public Pokemon createPokemon(@RequestBody Pokemon pokemon) {
+    @PostMapping("/create")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Pokemon createPokemon(@Valid @RequestBody Pokemon pokemon) {
         return pokemonService.savePokemon(pokemon);
     }
 }

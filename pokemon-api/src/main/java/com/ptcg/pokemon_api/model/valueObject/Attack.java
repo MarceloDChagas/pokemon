@@ -1,15 +1,23 @@
 package com.ptcg.pokemon_api.model.valueObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ptcg.pokemon_api.exception.InvalidAttackException;
 
 public class Attack {
     private String name;
     private int damage;
 
-    public Attack(String name, int damage) {
-        validateAttack(name, damage);
+   @JsonCreator
+    public Attack(
+        @JsonProperty("name") String name,
+        @JsonProperty("damage") int damage
+    ) {
         this.name = name;
         this.damage = damage;
+    }
+
+    public Attack() {
     }
 
     private void validateAttack(String name, int damage) {

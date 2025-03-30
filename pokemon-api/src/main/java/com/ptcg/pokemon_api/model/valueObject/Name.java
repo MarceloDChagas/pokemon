@@ -2,6 +2,8 @@ package com.ptcg.pokemon_api.model.valueObject;
 
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.ptcg.pokemon_api.exception.InvalidNameException;
 
 public class Name {
@@ -10,6 +12,7 @@ public class Name {
 
     private String name;
 
+    @JsonCreator
     public Name(String name) {
         if (!isValidName(name)) {
             throw new InvalidNameException("Invalid Pokémon name: " + name);
@@ -17,7 +20,12 @@ public class Name {
         this.name = name;
     }
 
+    @JsonValue
     public String getName() {
+        return name;
+    }
+
+    public String getValue() {
         return name;
     }
 

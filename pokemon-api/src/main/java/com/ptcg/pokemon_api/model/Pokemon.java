@@ -4,6 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ptcg.pokemon_api.model.Enum.*;
 import com.ptcg.pokemon_api.model.valueObject.*;
 
@@ -35,6 +37,20 @@ public class Pokemon {
     private PokemonStatus pokemonStatus;
     
     public Pokemon() {
+    }
+
+    // Construtor para desserialização
+    @JsonCreator
+    public Pokemon(
+        @JsonProperty("id") String id,
+        @JsonProperty("name") String name,
+        @JsonProperty("type") PokemonType type,
+        @JsonProperty("pokemonStatus") PokemonStatus pokemonStatus
+    ) {
+        this.id = id;
+        this.name = new Name(name);
+        this.type = type;
+        this.pokemonStatus = pokemonStatus;
     }
 
     private Pokemon(Builder builder) {
@@ -133,5 +149,9 @@ public class Pokemon {
 
     public PokemonStatus getPokemonStatus() {
         return pokemonStatus;
+    }
+
+    public String getFormattedName() {
+        return name != null ? name.getName() : null;
     }
 }

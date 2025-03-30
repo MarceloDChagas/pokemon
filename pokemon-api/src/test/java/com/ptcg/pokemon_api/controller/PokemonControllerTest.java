@@ -13,20 +13,20 @@ import com.ptcg.pokemon_api.service.PokemonService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@WebMvcTest(PokemonController.class) // Carrega apenas o contexto web do Spring
+@WebMvcTest(PokemonController.class)
 public class PokemonControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @MockBean
     private PokemonService pokemonService;
 
     @Autowired
@@ -57,15 +57,20 @@ public class PokemonControllerTest {
 
    @Test
     public void testGetPokemonById_NotFound() throws Exception {
-    when(pokemonService.getPokemonById("999")).thenReturn(null);
+        when(pokemonService.getPokemonById("999")).thenReturn(null);
 
-    mockMvc.perform(get("/pokemon/999"))
-            .andExpect(status().isNotFound()); // Espera 404, não 500
-}
+        mockMvc.perform(get("/pokemon/999"))
+                .andExpect(status().isNotFound());
+    }
 
     @Test
     public void testGetPokemonByType_Success() throws Exception {
-        Pokemon electricPokemon = new Pokemon.Builder().type(PokemonType.ELECTRIC).build();
+        Pokemon electricPokemon = new Pokemon.Builder()
+                .id("1")
+                .name(new Name("Pikachu"))
+                .type(PokemonType.ELECTRIC)
+                .build();
+        
         List<Pokemon> mockList = Arrays.asList(electricPokemon);
 
         when(pokemonService.getPokemonByType("ELECTRIC")).thenReturn(mockList);
@@ -80,13 +85,23 @@ public class PokemonControllerTest {
         when(pokemonService.getPokemonByType("UNKNOWN")).thenReturn(Collections.emptyList());
     
         mockMvc.perform(get("/pokemon/type/UNKNOWN"))
-                .andExpect(status().isNotFound()); // Espera 404
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void testGetAllPokemons_Success() throws Exception {
-        Pokemon p1 = new Pokemon.Builder().id("1").build();
-        Pokemon p2 = new Pokemon.Builder().id("2").build();
+        Pokemon p1 = new Pokemon.Builder()
+                .id("1")
+                .name(new Name("Pikachu"))
+                .type(PokemonType.ELECTRIC)
+                .build();
+                
+        Pokemon p2 = new Pokemon.Builder()
+                .id("2")
+                .name(new Name("Charmander"))
+                .type(PokemonType.FIRE)
+                .build();
+                
         List<Pokemon> mockList = Arrays.asList(p1, p2);
 
         when(pokemonService.getAllPokemons()).thenReturn(mockList);
