@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ptcg.pokemon_api.exception.InvalidAttackException;
 
 public class Attack {
+    @JsonProperty("name") 
     private String name;
+    
+    @JsonProperty("damage") 
     private int damage;
 
    @JsonCreator

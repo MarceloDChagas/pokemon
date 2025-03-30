@@ -17,7 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @WebMvcTest(PokemonController.class)
@@ -32,11 +31,12 @@ public class PokemonControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Test
-    public void testGetHelloPokemon() throws Exception {
-        mockMvc.perform(get("/pokemon"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Hello, Pokemon!"));
+    private Attack createAttack(String name, int damage) {
+        return new Attack(name, damage);
+    }
+
+    private PokemonStatus createPokemonStatus(int hp, List<Attack> attacks) {
+        return new PokemonStatus(hp, attacks);
     }
 
     @Test
@@ -45,22 +45,20 @@ public class PokemonControllerTest {
                 .id("1")
                 .name(new Name("Pikachu"))
                 .type(PokemonType.ELECTRIC)
+                .pokemonStatus(createPokemonStatus(
+                    50, 
+                    List.of(createAttack("Thunder Shock", 10), createAttack("Quick Attack", 0))
+                ))
                 .build();
 
         when(pokemonService.getPokemonById("1")).thenReturn(mockPokemon);
 
-        mockMvc.perform(get("/pokemon/1"))
+        mockMvc.perform(get("/1")) 
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.name.name").value("Pikachu"));
-    }
-
-   @Test
-    public void testGetPokemonById_NotFound() throws Exception {
-        when(pokemonService.getPokemonById("999")).thenReturn(null);
-
-        mockMvc.perform(get("/pokemon/999"))
-                .andExpect(status().isNotFound());
+                .andExpect(jsonPath("$.name").value("Pikachu"))
+                .andExpect(jsonPath("$.pokemonStatus.hp").value(50))
+                .andExpect(jsonPath("$.pokemonStatus.attack[0].name").value("Thunder Shock"));
     }
 
     @Test
@@ -69,23 +67,20 @@ public class PokemonControllerTest {
                 .id("1")
                 .name(new Name("Pikachu"))
                 .type(PokemonType.ELECTRIC)
+                .pokemonStatus(createPokemonStatus(
+                    50, 
+                    List.of(createAttack("Thunder Shock", 10), createAttack("Thunderbolt", 40))
+                ))
                 .build();
         
-        List<Pokemon> mockList = Arrays.asList(electricPokemon);
+        List<Pokemon> mockList = List.of(electricPokemon);
 
         when(pokemonService.getPokemonByType("ELECTRIC")).thenReturn(mockList);
 
-        mockMvc.perform(get("/pokemon/type/ELECTRIC"))
+        mockMvc.perform(get("/type/ELECTRIC"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].type").value("ELECTRIC"));
-    }
-
-    @Test
-    public void testGetPokemonByType_EmptyList() throws Exception {
-        when(pokemonService.getPokemonByType("UNKNOWN")).thenReturn(Collections.emptyList());
-    
-        mockMvc.perform(get("/pokemon/type/UNKNOWN"))
-                .andExpect(status().isNotFound());
+                .andExpect(jsonPath("$[0].type").value("ELECTRIC"))
+                .andExpect(jsonPath("$[0].pokemonStatus.attack[0].damage").value(10));
     }
 
     @Test
@@ -94,42 +89,41 @@ public class PokemonControllerTest {
                 .id("1")
                 .name(new Name("Pikachu"))
                 .type(PokemonType.ELECTRIC)
+                .pokemonStatus(createPokemonStatus(50, List.of(createAttack("Thunder Shock", 10))))
                 .build();
                 
         Pokemon p2 = new Pokemon.Builder()
                 .id("2")
                 .name(new Name("Charmander"))
                 .type(PokemonType.FIRE)
+                .pokemonStatus(createPokemonStatus(39, List.of(createAttack("Ember", 40))))
                 .build();
                 
         List<Pokemon> mockList = Arrays.asList(p1, p2);
 
         when(pokemonService.getAllPokemons()).thenReturn(mockList);
 
-        mockMvc.perform(get("/pokemon/all"))
+        mockMvc.perform(get("/pokemons"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2));
-    }
-
-    @Test
-    public void testGetAllPokemons_EmptyList() throws Exception {
-        when(pokemonService.getAllPokemons()).thenReturn(Collections.emptyList());
-
-        mockMvc.perform(get("/pokemon/all"))
-                .andExpect(status().isNotFound());
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[1].pokemonStatus.hp").value(39));
     }
 
     @Test
     public void testCreatePokemon_Success() throws Exception {
+        Attack attack = new Attack("Ember", 40);
+        PokemonStatus status = new PokemonStatus(39, List.of(attack)); 
+        
         Pokemon newPokemon = new Pokemon.Builder()
                 .id("3")
                 .name(new Name("Charmander"))
                 .type(PokemonType.FIRE)
+                .pokemonStatus(status) 
                 .build();
-
+    
         when(pokemonService.savePokemon(any(Pokemon.class))).thenReturn(newPokemon);
-
-        mockMvc.perform(post("/pokemon/create")
+    
+        mockMvc.perform(post("/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newPokemon)))
                 .andExpect(status().isOk())

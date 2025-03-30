@@ -3,6 +3,7 @@ package com.ptcg.pokemon_api.model.valueObject;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.ptcg.pokemon_api.exception.InvalidNameException;
 
@@ -10,6 +11,7 @@ public class Name {
     private static final String NAME_REGEX = "^[A-Za-z0-9 .:'-]+$";
     private static final Pattern PATTERN = Pattern.compile(NAME_REGEX);
 
+    @JsonProperty("name")
     private String name;
 
     @JsonCreator

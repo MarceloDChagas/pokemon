@@ -16,6 +16,7 @@ public class Pokemon {
     private String id;
 
     @Field("name")
+    @JsonProperty("name")
     private Name name;
 
     @Field("type")

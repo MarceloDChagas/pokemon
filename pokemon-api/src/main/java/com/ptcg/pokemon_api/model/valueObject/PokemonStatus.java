@@ -13,6 +13,7 @@ public class PokemonStatus {
     private int hp;
     
     @Field("attack")    
+    @JsonProperty("attack")
     private List<Attack> attack;
 
     public PokemonStatus() {}

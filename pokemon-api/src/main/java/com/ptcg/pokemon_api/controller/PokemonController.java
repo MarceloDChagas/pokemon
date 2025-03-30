@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.ptcg.pokemon_api.exception.InvalidAttackException;
+import com.ptcg.pokemon_api.exception.InvalidHpException;
 import com.ptcg.pokemon_api.exception.PokemonNotFoundException;
 import com.ptcg.pokemon_api.model.Pokemon;
 import com.ptcg.pokemon_api.service.PokemonService;
@@ -50,8 +52,13 @@ public class PokemonController {
     }
 
     @PostMapping("/create")
-    @ResponseStatus(HttpStatus.CREATED)
     public Pokemon createPokemon(@Valid @RequestBody Pokemon pokemon) {
         return pokemonService.savePokemon(pokemon);
+    }
+    
+    @ExceptionHandler({InvalidAttackException.class, InvalidHpException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleValidationExceptions(Exception ex) {
+        return ex.getMessage();
     }
 }
