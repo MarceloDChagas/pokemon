@@ -1,3 +1,4 @@
+
 package com.ptcg.pokemon_api.service;
 
 import com.ptcg.pokemon_api.exception.ResourceAlreadyExistsException;
@@ -8,6 +9,7 @@ import com.ptcg.pokemon_api.model.valueObject.PokemonCollection;
 import com.ptcg.pokemon_api.model.User;
 import com.ptcg.pokemon_api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +26,9 @@ public class UserService {
     @Autowired
     private PokemonService pokemonService;
     
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
     // User methods
     public User createUser(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
@@ -32,6 +37,10 @@ public class UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new ResourceAlreadyExistsException("Email already exists: " + user.getEmail());
         }
+        
+        // Encriptar a senha antes de salvar
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        
         return userRepository.save(user);
     }
     
@@ -56,6 +65,12 @@ public class UserService {
         User user = getUserById(id);
         user.setUsername(userDetails.getUsername());
         user.setEmail(userDetails.getEmail());
+        
+        // Se uma nova senha for fornecida, encriptar antes de atualizar
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        }
+        
         return userRepository.save(user);
     }
     
@@ -63,6 +78,13 @@ public class UserService {
         User user = getUserById(id);
         userRepository.delete(user);
     }
+    
+    // Método para verificar senha - útil para autenticação
+    public boolean validatePassword(String rawPassword, String encodedPassword) {
+        return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
+    
+    // Resto dos métodos permanecem inalterados...
     
     // Collection methods
     public PokemonCollection createCollection(String userId, PokemonCollection collection) {
