@@ -1,9 +1,9 @@
 package com.ptcg.pokemon_api.controller;
 
-import com.ptcg.pokemon_api.model.valueObject.CollectionItem;
 import com.ptcg.pokemon_api.model.Pokemon;
-import com.ptcg.pokemon_api.model.valueObject.PokemonCollection;
 import com.ptcg.pokemon_api.model.User;
+import com.ptcg.pokemon_api.model.valueobject.CollectionItem;
+import com.ptcg.pokemon_api.model.valueobject.PokemonCollection;
 import com.ptcg.pokemon_api.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,10 +3,10 @@ package com.ptcg.pokemon_api.service;
 
 import com.ptcg.pokemon_api.exception.ResourceAlreadyExistsException;
 import com.ptcg.pokemon_api.exception.ResourceNotFoundException;
-import com.ptcg.pokemon_api.model.valueObject.CollectionItem;
 import com.ptcg.pokemon_api.model.Pokemon;
-import com.ptcg.pokemon_api.model.valueObject.PokemonCollection;
 import com.ptcg.pokemon_api.model.User;
+import com.ptcg.pokemon_api.model.valueobject.CollectionItem;
+import com.ptcg.pokemon_api.model.valueobject.PokemonCollection;
 import com.ptcg.pokemon_api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

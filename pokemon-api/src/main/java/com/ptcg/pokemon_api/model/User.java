@@ -3,8 +3,9 @@ package com.ptcg.pokemon_api.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import com.ptcg.pokemon_api.model.valueObject.PokemonCollection;
+import com.ptcg.pokemon_api.model.valueobject.PokemonCollection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +18,10 @@ public class User {
     @Indexed(unique = true)
     private String username;
     
+    @Field("password")
     private String password; 
     
+    @Field("email")
     private String email;
     
     private List<PokemonCollection> collections = new ArrayList<>();
@@ -32,7 +35,6 @@ public class User {
         this.email = email;
     }
     
-    // Getters and Setters
     public String getId() {
         return id;
     }

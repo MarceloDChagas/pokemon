@@ -1,58 +1,39 @@
 package com.ptcg.pokemon_api.model;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ptcg.pokemon_api.model.Enum.*;
-import com.ptcg.pokemon_api.model.valueObject.*;
+import com.ptcg.pokemon_api.model.valueobject.*;
 
 @Document(collection = "pokemons")
 public class Pokemon {
-    
-  @Id
-    private String id;
+
+    @Id
+    private final String id;
 
     @Field("name")
-    @JsonProperty("name")
-    private Name name;
+    private final Name name;
 
     @Field("type")
-    private PokemonType type;
+    private final PokemonType type;
 
     @Field("description")
-    private Description description;
+    private final Description description;
 
     @Field("cardType")
-    private CardType cardType;
+    private final CardType cardType;
 
     @Field("rarity")
-    private PokemonRarity rarity;
+    private final PokemonRarity rarity;
 
     @Field("evolutionStage")
-    private EvolutionStage evolutionStage;
+    private final EvolutionStage evolutionStage;
 
     @Field("pokemonStatus")
-    private PokemonStatus pokemonStatus;
-    
-    public Pokemon() {
-    }
-
-    // Construtor para desserialização
-    @JsonCreator
-    public Pokemon(
-        @JsonProperty("id") String id,
-        @JsonProperty("name") String name,
-        @JsonProperty("type") PokemonType type,
-        @JsonProperty("pokemonStatus") PokemonStatus pokemonStatus
-    ) {
-        this.id = id;
-        this.name = new Name(name);
-        this.type = type;
-        this.pokemonStatus = pokemonStatus;
-    }
+    private final PokemonStatus pokemonStatus;
 
     private Pokemon(Builder builder) {
         this.id = builder.id;
@@ -120,6 +101,34 @@ public class Pokemon {
         }
     }
 
+    public boolean hasSameName(Name other) {
+        return name.isSame(other);
+    }
+
+    public boolean hasType(PokemonType type) {
+        return this.type == type;
+    }
+
+    public boolean hasAttackNamed(String name) {
+        return pokemonStatus.hasAttackNamed(name);
+    }
+
+    public int getAttackDamageByName(String name) {
+        return pokemonStatus.getDamageByName(name);
+    }
+
+    public int getHp() {
+        return pokemonStatus.getHp();
+    }
+
+    public List<Attack> getAttacks() {
+        return pokemonStatus.getAttacks();
+    }
+
+    public int getAttackCount() {
+        return pokemonStatus.getAttackCount();
+    }
+
     public String getId() {
         return id;
     }
@@ -150,9 +159,5 @@ public class Pokemon {
 
     public PokemonStatus getPokemonStatus() {
         return pokemonStatus;
-    }
-
-    public String getFormattedName() {
-        return name != null ? name.getName() : null;
     }
 }

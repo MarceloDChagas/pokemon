@@ -2,8 +2,8 @@ package com.ptcg.pokemon_api.model;
 
 import org.junit.jupiter.api.Test;
 
-import com.ptcg.pokemon_api.model.valueObject.CollectionItem;
-import com.ptcg.pokemon_api.model.valueObject.PokemonCollection;
+import com.ptcg.pokemon_api.model.valueobject.CollectionItem;
+import com.ptcg.pokemon_api.model.valueobject.PokemonCollection;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -2,11 +2,16 @@ package com.ptcg.pokemon_api.model;
 
 import com.ptcg.pokemon_api.exception.ResourceAlreadyExistsException;
 import com.ptcg.pokemon_api.exception.ResourceNotFoundException;
+import com.ptcg.pokemon_api.model.Enum.CardType;
+import com.ptcg.pokemon_api.model.Enum.EvolutionStage;
+import com.ptcg.pokemon_api.model.Enum.PokemonRarity;
 import com.ptcg.pokemon_api.model.Enum.PokemonType;
-import com.ptcg.pokemon_api.model.valueObject.Attack;
-import com.ptcg.pokemon_api.model.valueObject.CollectionItem;
-import com.ptcg.pokemon_api.model.valueObject.PokemonCollection;
-import com.ptcg.pokemon_api.model.valueObject.PokemonStatus;
+import com.ptcg.pokemon_api.model.valueobject.Attack;
+import com.ptcg.pokemon_api.model.valueobject.CollectionItem;
+import com.ptcg.pokemon_api.model.valueobject.Description;
+import com.ptcg.pokemon_api.model.valueobject.Name;
+import com.ptcg.pokemon_api.model.valueobject.PokemonCollection;
+import com.ptcg.pokemon_api.model.valueobject.PokemonStatus;
 import com.ptcg.pokemon_api.repository.UserRepository;
 import com.ptcg.pokemon_api.service.PokemonService;
 import com.ptcg.pokemon_api.service.UserService;
@@ -51,7 +56,16 @@ public class UserTests {
         testCollection.setId("collection123");
 
         PokemonStatus status = new PokemonStatus(100, Arrays.asList(new Attack("Thunderbolt", 90)));
-        testPokemon = new Pokemon("pokemon123", "Pikachu", PokemonType.ELECTRIC, status);
+        testPokemon = new Pokemon.Builder()
+                .id("pokemon123")
+                .name(new Name("Pikachu"))
+                .type(PokemonType.ELECTRIC)
+                .description(new Description("A friendly electric-type Pokémon."))
+                .cardType(CardType.POKEMON)
+                .rarity(PokemonRarity.COMMON)
+                .evolutionStage(EvolutionStage.BASIC)
+                .pokemonStatus(status)
+                .build();
     }
 
     @Test
@@ -279,6 +293,6 @@ public class UserTests {
 
         assertNotNull(pokemons);
         assertEquals(1, pokemons.size());
-        assertEquals("Pikachu", pokemons.get(0).getName().getName());
+        assertEquals("Pikachu", pokemons.get(0).getName());
     }
 }

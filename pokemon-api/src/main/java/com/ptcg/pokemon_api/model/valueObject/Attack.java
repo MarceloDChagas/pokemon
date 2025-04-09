@@ -1,34 +1,37 @@
-package com.ptcg.pokemon_api.model.valueObject;
+package com.ptcg.pokemon_api.model.valueobject;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ptcg.pokemon_api.exception.InvalidAttackException;
 
-public class Attack {
-    @JsonProperty("name") 
-    private String name;
-    
-    @JsonProperty("damage") 
-    private int damage;
+import java.util.Objects;
 
-   @JsonCreator
-    public Attack(
-        @JsonProperty("name") String name,
-        @JsonProperty("damage") int damage
-    ) {
+public class Attack {
+
+    private final String name;
+    private final int damage;
+
+    @JsonCreator
+    public Attack(@JsonProperty("name") String name, @JsonProperty("damage") int damage) {
+        validateAttack(name, damage);
         this.name = name;
         this.damage = damage;
     }
 
-    public Attack() {
+    private void validateAttack(String name, int damage) {
+       validateName(name);
+        validateDamage(damage);
     }
 
-    private void validateAttack(String name, int damage) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new InvalidAttackException(name);
-        }
+    private void validateDamage(int damage) {
         if (damage < 0) {
-            throw new InvalidAttackException(damage);
+            throw new InvalidAttackException("Damage cannot be negative.");
+        }
+    }
+
+    private void validateName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new InvalidAttackException("Name cannot be null or empty.");
         }
     }
 
@@ -36,25 +39,28 @@ public class Attack {
         return name;
     }
 
-    public void setName(String name) {
-        validateAttack(name, this.damage);
-        this.name = name;
-    }
-
     public int getDamage() {
         return damage;
-    }
-
-    public void setDamage(int damage) {
-        validateAttack(this.name, damage);
-        this.damage = damage;
     }
 
     @Override
     public String toString() {
         return "Attack{" +
-                "name='" + name + '\'' +
-                ", damage=" + damage +
-                '}';
+               "name='" + name + '\'' +
+               ", damage=" + damage +
+               '}';
     }
-}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Attack attack = (Attack) o;
+        return damage == attack.damage && name.equalsIgnoreCase(attack.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name.toLowerCase(), damage);
+    }
+} 

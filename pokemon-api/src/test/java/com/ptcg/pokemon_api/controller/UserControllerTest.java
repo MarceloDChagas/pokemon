@@ -1,20 +1,22 @@
 package com.ptcg.pokemon_api.controller;
 
 import com.ptcg.pokemon_api.model.*;
+import com.ptcg.pokemon_api.model.Enum.CardType;
+import com.ptcg.pokemon_api.model.Enum.EvolutionStage;
+import com.ptcg.pokemon_api.model.Enum.PokemonRarity;
 import com.ptcg.pokemon_api.model.Enum.PokemonType;
-import com.ptcg.pokemon_api.model.valueObject.*;
+import com.ptcg.pokemon_api.model.valueobject.*;
 import com.ptcg.pokemon_api.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
-
 import java.util.*;
-
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,11 +41,20 @@ public class UserControllerTest {
         testUser = new User("testuser", "password123", "test@example.com");
         testUser.setId("user123");
 
-        testCollection = new PokemonCollection("Minha Coleção", "Minha coleção de teste");
+        testCollection = new PokemonCollection(new Name("Minha Coleção"), new Description("Minha coleção de teste"));
         testCollection.setId("col123");
 
         PokemonStatus status = new PokemonStatus(100, Arrays.asList(new Attack("Tackle", 40)));
-        testPokemon = new Pokemon("poke123", "Bulbasaur", PokemonType.GRASS, status);
+        testPokemon = new Pokemon.Builder()
+                .id("poke123")
+                .name(new Name("Bulbasaur"))
+                .type(PokemonType.GRASS)
+                .description(new Description("A grass-type Pokémon."))
+                .cardType(CardType.POKEMON)
+                .rarity(PokemonRarity.COMMON)
+                .evolutionStage(EvolutionStage.BASIC)
+                .pokemonStatus(status)
+                .build();
 
         testItem = new CollectionItem("poke123", 2);
     }
@@ -156,7 +167,7 @@ public class UserControllerTest {
 
     @Test
     void testUpdateCollection() {
-        PokemonCollection updatedCollection = new PokemonCollection("Coleção Atualizada", "Nova descrição");
+        PokemonCollection updatedCollection = new PokemonCollection(new Name("Coleção Atualizada"), new Description("Nova descrição"));
         when(userService.updateCollection(eq("user123"), eq("col123"), any(PokemonCollection.class)))
                 .thenReturn(updatedCollection);
 
@@ -229,7 +240,7 @@ public class UserControllerTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("Bulbasaur", result.get(0).getName().getName());
+        assertEquals("Bulbasaur", result.get(0).getName());
         verify(userService, times(1)).getPokemonsInCollection("user123", "col123");
     }
 }

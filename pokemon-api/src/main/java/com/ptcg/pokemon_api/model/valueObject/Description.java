@@ -1,29 +1,50 @@
-package com.ptcg.pokemon_api.model.valueObject;
+package com.ptcg.pokemon_api.model.valueobject;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.ptcg.pokemon_api.exception.InvalidDescriptionException;
 
-public class Description {
-    private String description;
+import java.util.Objects;
 
-    public Description() {}
-    
+public class Description {
+    private final String description;
+
     @JsonCreator
     public Description(String description) {
+        validateDescription(description);
+        this.description = description.trim();
+    }
+
+    private static void validateDescription(String description) {
         if (!isValidDescription(description)) {
             throw new InvalidDescriptionException(description);
         }
-        this.description = description.trim(); 
+    }
+
+    private static boolean isValidDescription(String description) {
+        return description != null && !description.trim().isEmpty();
     }
 
     @JsonValue
-    public String getDescription() {
+    public String toJson() {
         return description;
     }
 
-    public boolean isValidDescription(String description) {
-        return description != null && !description.trim().isEmpty();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Description)) return false;
+        Description that = (Description) o;
+        return description.equalsIgnoreCase(that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(description.toLowerCase());
+    }
+
+    public boolean isSame(Description other) {
+        return description.equalsIgnoreCase(other.description);
     }
 
     @Override

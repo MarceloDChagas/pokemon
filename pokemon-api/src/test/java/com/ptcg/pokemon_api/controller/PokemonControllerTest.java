@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ptcg.pokemon_api.model.Pokemon;
 import com.ptcg.pokemon_api.model.Enum.PokemonType;
-import com.ptcg.pokemon_api.model.valueObject.*;
+import com.ptcg.pokemon_api.model.valueobject.*;
 import com.ptcg.pokemon_api.service.PokemonService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

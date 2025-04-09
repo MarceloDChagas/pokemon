@@ -1,61 +1,112 @@
-package com.ptcg.pokemon_api.model.valueObject;
+package com.ptcg.pokemon_api.model.valueobject;
 
 import java.util.Date;
+import java.util.Objects;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 public class CollectionItem {
-    private String pokemonId;
-    private Date addedAt;
-    private int quantity;
+
+    @Id
+    private final String pokemonId;
     
-    public CollectionItem() {
-        this.addedAt = new Date();
-        this.quantity = 1;
+    @Field("addedAt")
+    private final Date addedAt;
+
+    @Field("quantity")
+    private final Quantity quantity;
+
+    private CollectionItem(Builder builder){
+        this.addedAt = builder.addedAt;
+        this.pokemonId = builder.pokemonId;
+        this.quantity = builder.quantity;
+    }
+
+    public static class Builder{
+        private String pokemonId;
+        private Date addedAt;
+        private Quantity quantity;
+
+        public Builder pokemonId(String pokemonId) {
+            validatePokemonId(pokemonId);
+            this.pokemonId = pokemonId;
+            return this;
+        }
+
+        public Builder addedAt(Date addedAt) {
+            this.addedAt = addedAt;
+            return this;
+        }
+
+        public Builder quantity(Quantity quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public CollectionItem build() {
+            return new CollectionItem(this);
+        }
     }
     
-    public CollectionItem(String pokemonId) {
-        this.pokemonId = pokemonId;
-        this.addedAt = new Date();
-        this.quantity = 1;
+    private static void validatePokemonId(String pokemonId) {
+        if (!isValidPokemonId(pokemonId)) {
+            throw new IllegalArgumentException("Invalid Pokémon ID: " + pokemonId);
+        }
     }
-    
-    public CollectionItem(String pokemonId, int quantity) {
-        this.pokemonId = pokemonId;
-        this.addedAt = new Date();
-        this.quantity = quantity;
+
+    private static boolean isValidPokemonId(String pokemonId) {
+        return pokemonId != null && !pokemonId.trim().isEmpty();
     }
-    
-    // Getters and Setters
+
     public String getPokemonId() {
         return pokemonId;
     }
-    
-    public void setPokemonId(String pokemonId) {
-        this.pokemonId = pokemonId;
-    }
-    
+
     public Date getAddedAt() {
-        return addedAt;
+        return new Date(addedAt.getTime());
+    }
+
+    public CollectionItem incrementQuantity() {
+        return new Builder()
+                .pokemonId(this.pokemonId)
+                .addedAt(this.addedAt)
+                .quantity(this.quantity.increment())
+                .build();
     }
     
-    public void setAddedAt(Date addedAt) {
-        this.addedAt = addedAt;
+    public CollectionItem decrementQuantity() {
+        return new Builder()
+                .pokemonId(this.pokemonId)
+                .addedAt(this.addedAt)
+                .quantity(this.quantity.decrement())
+                .build();
     }
     
-    public int getQuantity() {
+
+    public Quantity getQuantity() {
         return quantity;
     }
-    
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+
+    @Override
+    public String toString() {
+        return "CollectionItem{" +
+               "pokemonId='" + pokemonId + '\'' +
+               ", addedAt=" + addedAt +
+               ", quantity=" + quantity +
+               '}';
     }
-    
-    public void incrementQuantity() {
-        this.quantity++;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CollectionItem)) return false;
+        CollectionItem that = (CollectionItem) o;
+        return Objects.equals(pokemonId, that.pokemonId) &&
+               Objects.equals(addedAt, that.addedAt);
     }
-    
-    public void decrementQuantity() {
-        if (this.quantity > 0) {
-            this.quantity--;
-        }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pokemonId, addedAt);
     }
 }

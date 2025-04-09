@@ -2,7 +2,8 @@
 package com.ptcg.pokemon_api.exception;
 
 import java.util.List;
-import com.ptcg.pokemon_api.model.valueObject.Attack;
+
+import com.ptcg.pokemon_api.model.valueobject.Attack;
 
 public class InvalidAttackException extends RuntimeException {
     public InvalidAttackException(String attackName) {
