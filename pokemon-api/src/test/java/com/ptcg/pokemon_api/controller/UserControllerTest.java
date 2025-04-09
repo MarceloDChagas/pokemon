@@ -41,7 +41,11 @@ public class UserControllerTest {
         testUser = new User("testuser", "password123", "test@example.com");
         testUser.setId("user123");
 
-        testCollection = new PokemonCollection(new Name("Minha Coleção"), new Description("Minha coleção de teste"));
+        testCollection = new PokemonCollection.Builder()
+                .name(new Name("Minha Coleção"))
+                .description(new Description("Descrição da coleção"))
+                .createdAt(new Date())
+                .build();
         testCollection.setId("col123");
 
         PokemonStatus status = new PokemonStatus(100, Arrays.asList(new Attack("Tackle", 40)));
@@ -167,7 +171,11 @@ public class UserControllerTest {
 
     @Test
     void testUpdateCollection() {
-        PokemonCollection updatedCollection = new PokemonCollection(new Name("Coleção Atualizada"), new Description("Nova descrição"));
+        PokemonCollection updatedCollection = new PokemonCollection.Builder()	
+                .name(new Name("Coleção Atualizada"))
+                .description(new Description("Descrição Atualizada"))
+                .createdAt(new Date())
+                .build();
         when(userService.updateCollection(eq("user123"), eq("col123"), any(PokemonCollection.class)))
                 .thenReturn(updatedCollection);
 

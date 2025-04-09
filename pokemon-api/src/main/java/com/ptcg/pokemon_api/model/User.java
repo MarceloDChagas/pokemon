@@ -82,4 +82,15 @@ public class User {
     public void removeCollection(String collectionId) {
         this.collections.removeIf(collection -> collection.getId().equals(collectionId));
     }
+
+    public void updateCollection(PokemonCollection updatedCollection) {
+        for (int i = 0; i < collections.size(); i++) {
+            if (collections.get(i).getId().equals(updatedCollection.getId())) {
+                collections.set(i, updatedCollection);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Collection not found for update");
+    }
+    
 }

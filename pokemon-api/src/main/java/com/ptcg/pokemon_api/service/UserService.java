@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -29,7 +28,6 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     
-    // User methods
     public User createUser(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new ResourceAlreadyExistsException("Username already exists: " + user.getUsername());
@@ -38,7 +36,6 @@ public class UserService {
             throw new ResourceAlreadyExistsException("Email already exists: " + user.getEmail());
         }
         
-        // Encriptar a senha antes de salvar
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         
         return userRepository.save(user);
@@ -66,7 +63,6 @@ public class UserService {
         user.setUsername(userDetails.getUsername());
         user.setEmail(userDetails.getEmail());
         
-        // Se uma nova senha for fornecida, encriptar antes de atualizar
         if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
         }
@@ -79,18 +75,14 @@ public class UserService {
         userRepository.delete(user);
     }
     
-    // Método para verificar senha - útil para autenticação
     public boolean validatePassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
     
-    // Resto dos métodos permanecem inalterados...
     
-    // Collection methods
     public PokemonCollection createCollection(String userId, PokemonCollection collection) {
         User user = getUserById(userId);
         
-        // Generate ID for the collection
         collection.setId(UUID.randomUUID().toString());
         
         user.addCollection(collection);
@@ -114,13 +106,22 @@ public class UserService {
     public PokemonCollection updateCollection(String userId, String collectionId, PokemonCollection collectionDetails) {
         User user = getUserById(userId);
         PokemonCollection existingCollection = getUserCollection(userId, collectionId);
-        
-        existingCollection.setName(collectionDetails.getName());
-        existingCollection.setDescription(collectionDetails.getDescription());
-        
+    
+        PokemonCollection.Builder builder = new PokemonCollection.Builder()
+                .id(existingCollection.getId()) 
+                .name(collectionDetails.getName() != null ? collectionDetails.getName() : existingCollection.getName())
+                .description(collectionDetails.getDescription() != null ? collectionDetails.getDescription() : existingCollection.getDescription())
+                .createdAt(existingCollection.getCreatedAt());
+    
+        PokemonCollection updatedCollection = existingCollection.updatePokemonCollection(builder);
+    
+        user.updateCollection(updatedCollection);
+    
         userRepository.save(user);
-        return existingCollection;
+    
+        return updatedCollection;
     }
+    
     
     public void deleteCollection(String userId, String collectionId) {
         User user = getUserById(userId);
@@ -128,34 +129,35 @@ public class UserService {
         userRepository.save(user);
     }
     
-    // Collection item methods
     public CollectionItem addPokemonToCollection(String userId, String collectionId, String pokemonId, int quantity) {
-        // Verify pokemon exists
+        // Verifica existência do Pokémon
         Pokemon pokemon = pokemonService.getPokemonById(pokemonId);
         if (pokemon == null) {
             throw new ResourceNotFoundException("Pokemon not found with id: " + pokemonId);
         }
-        
+    
         User user = getUserById(userId);
         PokemonCollection collection = getUserCollection(userId, collectionId);
-        
-        // Check if pokemon already exists in collection
-        Optional<CollectionItem> existingItem = collection.getItems().stream()
-                .filter(item -> item.getPokemonId().equals(pokemonId))
-                .findFirst();
-        
-        if (existingItem.isPresent()) {
-            // Update quantity
-            existingItem.get().setQuantity(existingItem.get().getQuantity() + quantity);
-        } else {
-            // Add new item
-            CollectionItem newItem = new CollectionItem(pokemonId, quantity);
-            collection.addItem(newItem);
-        }
-        
+    
+        // Cria novo item (pode ser novo ou atualização)
+        CollectionItem newItem = CollectionItem.create(pokemonId, quantity);
+    
+        // Atualiza a coleção com o novo item
+        PokemonCollection updatedCollection = collection.withAddedItem(newItem);
+    
+        // Atualiza a lista de coleções do usuário
+        user.updateCollection(updatedCollection); // já vimos como implementar esse método
+    
+        // Persiste as alterações
         userRepository.save(user);
-        return existingItem.orElse(new CollectionItem(pokemonId, quantity));
+    
+        // Retorna o item final (com quantidade atualizada)
+        return updatedCollection.getItems().stream()
+                .filter(item -> item.getPokemonId().equals(pokemonId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Unexpected error: item not found after update"));
     }
+    
     
     public void removePokemonFromCollection(String userId, String collectionId, String pokemonId) {
         User user = getUserById(userId);

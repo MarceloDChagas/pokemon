@@ -21,6 +21,17 @@ public class CollectionItem {
         this.pokemonId = builder.pokemonId;
         this.quantity = builder.quantity;
     }
+    public CollectionItem(String pokemonId, int quantity) {
+        if (pokemonId == null || pokemonId.isBlank()) {
+            throw new IllegalArgumentException("Pokemon ID cannot be null or empty");
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than 0");
+        }
+        this.pokemonId = pokemonId;
+        this.quantity = new Quantity(quantity);
+        this.addedAt = new Date();
+    }
 
     public static class Builder{
         private String pokemonId;
@@ -85,6 +96,14 @@ public class CollectionItem {
 
     public Quantity getQuantity() {
         return quantity;
+    }
+
+    public CollectionItem withUpdatedQuantity(int newQuantity) {
+        return new CollectionItem(this.pokemonId, newQuantity);
+    }
+
+    public static CollectionItem create(String pokemonId, int quantity) {
+        return new CollectionItem(pokemonId, quantity);
     }
 
     @Override

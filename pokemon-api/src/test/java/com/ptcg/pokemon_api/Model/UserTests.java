@@ -23,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +53,11 @@ public class UserTests {
         testUser = new User("testuser", "password123", "test@example.com");
         testUser.setId("user123");
 
-        testCollection = new PokemonCollection("Minha Coleção", "Minha primeira coleção de Pokémon");
+        testCollection = new PokemonCollection.Builder()
+                .name(new Name("Minha Coleção"))
+                .description(new Description("Descrição da coleção"))
+                .createdAt(new Date())
+                .build();
         testCollection.setId("collection123");
 
         PokemonStatus status = new PokemonStatus(100, Arrays.asList(new Attack("Thunderbolt", 90)));
@@ -219,7 +224,10 @@ public class UserTests {
     @Test
     void testUpdateCollection() {
         testUser.addCollection(testCollection);
-        PokemonCollection updatedDetails = new PokemonCollection("Coleção Atualizada", "Descrição atualizada");
+        PokemonCollection updatedDetails = new PokemonCollection.Builder()
+                .name(new Name("Coleção Atualizada"))
+                .description(new Description("Descrição atualizada"))
+                .build();
         
         when(userRepository.findById("user123")).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenReturn(testUser);

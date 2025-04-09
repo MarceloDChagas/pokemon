@@ -3,9 +3,13 @@ package com.ptcg.pokemon_api.model;
 import org.junit.jupiter.api.Test;
 
 import com.ptcg.pokemon_api.model.valueobject.CollectionItem;
+import com.ptcg.pokemon_api.model.valueobject.Description;
+import com.ptcg.pokemon_api.model.valueobject.Name;
 import com.ptcg.pokemon_api.model.valueobject.PokemonCollection;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Date;
 
 public class ModelClassesTests {
 
@@ -23,7 +27,11 @@ public class ModelClassesTests {
     void testUserAddCollection() {
         
         User user = new User("mario", "senha123", "mario@example.com");
-        PokemonCollection collection = new PokemonCollection("Meus Favoritos", "Minha coleção favorita");
+        PokemonCollection collection = new PokemonCollection.Builder()
+                .name(new Name("Meus Favoritos"))
+                .description(new Description("Minha coleção favorita"))
+                .createdAt(new Date())
+                .build();
         collection.setId("col1");
         
         user.addCollection(collection);
@@ -35,7 +43,11 @@ public class ModelClassesTests {
     @Test
     void testUserRemoveCollection() {
         User user = new User("mario", "senha123", "mario@example.com");
-        PokemonCollection collection = new PokemonCollection("Meus Favoritos", "Minha coleção favorita");
+        PokemonCollection collection = new PokemonCollection.Builder()
+                .name(new Name("Meus Favoritos"))
+                .description(new Description("Minha coleção favorita"))
+                .createdAt(new Date())
+                .build();
         collection.setId("col1");
         user.addCollection(collection);
         
@@ -46,7 +58,11 @@ public class ModelClassesTests {
     
     @Test
     void testPokemonCollectionCreation() {
-        PokemonCollection collection = new PokemonCollection("Raros", "Pokémons raros");
+        PokemonCollection collection = new PokemonCollection.Builder()
+                .name(new Name("Raros"))
+                .description(new Description("Pokémons raros"))
+                .createdAt(new Date())
+                .build();
         
         assertEquals("Raros", collection.getName());
         assertEquals("Pokémons raros", collection.getDescription());
@@ -56,7 +72,11 @@ public class ModelClassesTests {
     
     @Test
     void testPokemonCollectionAddItem() {
-        PokemonCollection collection = new PokemonCollection("Raros", "Pokémons raros");
+        PokemonCollection collection = new PokemonCollection.Builder()
+                .name(new Name("Raros"))
+                .description(new Description("Pokémons raros"))
+                .createdAt(new Date())
+                .build();
         CollectionItem item = new CollectionItem("poke1", 3);
         
         collection.addItem(item);
@@ -68,7 +88,11 @@ public class ModelClassesTests {
     
     @Test
     void testPokemonCollectionRemoveItem() {
-        PokemonCollection collection = new PokemonCollection("Raros", "Pokémons raros");
+        PokemonCollection collection = new PokemonCollection.Builder()
+                .name(new Name("Raros"))
+                .description(new Description("Pokémons raros"))
+                .createdAt(new Date())
+                .build();
         CollectionItem item = new CollectionItem("poke1", 3);
         collection.addItem(item);
         
@@ -88,7 +112,10 @@ public class ModelClassesTests {
     
     @Test
     void testCollectionItemDefaultQuantity() {
-        CollectionItem item = new CollectionItem("poke1");
+        CollectionItem item = new CollectionItem.Builder()
+                .pokemonId("poke1")
+                .addedAt(new Date())
+                .build();
         
         assertEquals(1, item.getQuantity());
     }

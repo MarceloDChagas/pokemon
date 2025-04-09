@@ -2,6 +2,8 @@ package com.ptcg.pokemon_api.model.valueobject;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -90,5 +92,53 @@ public class PokemonCollection {
     public void setId(String id) {
         this.id = id;
     }
+
+    public PokemonCollection withAddedItem(CollectionItem newItem) {
+    List<CollectionItem> updatedItems = new ArrayList<>(this.items.asList());
+
+    boolean found = false;
+    for (int i = 0; i < updatedItems.size(); i++) {
+        CollectionItem current = updatedItems.get(i);
+        if (current.getPokemonId().equals(newItem.getPokemonId())) {
+            CollectionItem updated = current.withUpdatedQuantity(current.getQuantity().toInt() + newItem.getQuantity().toInt());
+            updatedItems.set(i, updated);
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        updatedItems.add(newItem);
+    }
+
+    return new PokemonCollection.Builder()
+            .id(this.id)
+            .name(this.name)
+            .description(this.description)
+            .createdAt(this.createdAt)
+            .build()
+            .withItems(updatedItems);
+    }
+
+    public PokemonCollection withItems(List<CollectionItem> newItems) {
+        PokemonCollection updated = new PokemonCollection.Builder()
+                .id(this.id)
+                .name(this.name)
+                .description(this.description)
+                .createdAt(this.createdAt)
+                .build();
+        updated.items = new CollectionItems(newItems); 
+        return updated;
+    }
+
+    public PokemonCollection updatePokemonCollection(Builder builder) {
+        return new PokemonCollection.Builder()
+                .id(builder.id != null ? builder.id : this.id)
+                .name(builder.name != null ? builder.name : this.name)
+                .description(builder.description != null ? builder.description : this.description)
+                .createdAt(this.createdAt)
+                .build();
+    }
+
 }
 
